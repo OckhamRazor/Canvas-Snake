@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>活动记录图标</title>
+  <style>
+    #js-calendar-graph-canvas, #snake_canvas{
+      width: 676px;
+      height: 104px;
+      border: 1px solid #666;
+    }
+  </style>
+  <script src="./vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <svg class="js-calendar-graph-svg" v-bind:width="size.width" v-bind:height="size.height">
+      <g transform="translate(16,20)">
+        <g v-for="(item, index) in weeks" v-bind:translate="item.week.translate">
+          <rect width="10px" height="10px" v-bind:x="day.x" v-bind:y="day.y" v-bind:fill="color[parseInt(day.count/5)]" v-bind:data-count="day.count" data-date="" v-for="day in item.week"></rect>
+        </g>
+      </g>
+    </svg>
+  </div>
+  <p id="message"></p>
+  <canvas id="js-calendar-graph-canvas" width="676px" height="104px"></canvas>
+  <canvas id="snake_canvas" width="676px" height="104px"></canvas>
+  <script>
+
+    var weeks = [],week =[];
+    for(var i=0;i<52;i++){
+      week = [];
+      for(var j=0;j<7;j++){
+        var count = parseInt(Math.random()*20);
+        week.push({
+          x: i*12,
+          y: j*12,
+          count: count
+        });
+      }
+      weeks.push({
+
+        week: week,
+        translate: 'translate('+i*18+',0)'
+      });
+    }
+
+    var calendarGraph = new Vue({
+      el: '#app',
+      data: {
+        weeks: weeks,
+        size: {width: '676px', height: '104px'},
+        color: ["#eee", "#d6e685", "#8cc665", "#44a340", "#1e6823"]
+      },
+      method: {
+
+      },
+      computed: {
+
+      }
+    });
+  </script>
+  <script>
+
+    function getLocation(x, y, ratio) {
+      var bbox = canvas.getBoundingClientRect();
+
+      return {
+        x: (x - bbox.left) * (canvas.width / bbox.width) /ratio,
+        y: (y - bbox.top) * (canvas.height / bbox.height) /ratio
+
+        /*
+         * 此处不用下面两行是为了防止使用CSS和JS改变了canvas的高宽之后是表面积拉大而实际
+         * 显示像素不变而造成的坐标获取不准的情况
+         x: (x - bbox.left),
+         y: (y - bbox.top)
+         */
+      };
+    }
+
+  </script>
+  <script>
+    var record = [];
+    for(var i=0;i<52;i++){
+      for(var j=0;j<7;j++){
+        var count = parseInt(Math.random()*20);
+        record.push({
+          count: count
+        });
+      }
+    }
+    var canvas = document.getElementById('js-calendar-graph-canvas');
+    var ctx = canvas.getContext('2d');
+    setPixelRatio(canvas, ctx);
+
+    var color = ["#eee", "#d6e685", "#8cc665", "#44a340", "#1e6823"];
+
+    function drawRecord(data) {
+      var col = 0, row = 0;
+      for(var i=0,len=data.length;i<len;i++){
+        col = parseInt(i/7);
+        row = i%7;
+        ctx.fillStyle = color[parseInt(Math.random()*4)];
+        ctx.fillRect(16+12*col,20+12*row,10,10);
+      }
+    }
+    drawRecord(record);
+
+    //修正高分屏下canvas绘制模糊的问题
+    var ratio;
+    function setPixelRatio(canvas, ctx) {
+      var devicePixelRatio = window.devicePixelRatio || 1;
+      var backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+        ctx.mozBackingStorePixelRatio ||
+        ctx.msBackingStorePixelRatio ||
+        ctx.oBackingStorePixelRatio ||
+        ctx.backingStorePixelRatio || 1;
+      ratio = devicePixelRatio / backingStoreRatio;
+      canvas.width = canvas.width * ratio;
+      canvas.height = canvas.height * ratio;
+      ctx.scale(ratio, ratio);
+    }
+   canvas.onmousemove = function (e) {
+     var location = getLocation(e.clientX, e.clientY, ratio);
+     var message = document.getElementById("message");
+     message.innerHTML = "x=" + location.x + " ,y=" + location.y;
+   }
+  </script>
+  <script src="./utils.js"></script>
+
+  <script src="./app.js"></script>
+  <script src="./constants.js"></script>
+  <script src="./snake.js"></script>
+  <script src="./game.js"></script>
+</body>
+</html>
