@@ -62,7 +62,7 @@ Snake.prototype.isCollided = function (head) {
   return wallCollided || selfCollided;
 };
 //移动蛇的位置
-Snake.prototype.move = function (food, score) {
+Snake.prototype.move = function (foods, score) {
   var head = this.segments[0];
   var newHead;
 
@@ -88,12 +88,14 @@ Snake.prototype.move = function (food, score) {
   }
 
   this.segments.unshift(newHead); //像头部加入新身体
-  if(newHead.equals(food.position)){
-    score.add(food.getScore());
-    food.move();
-  }else{
-    this.segments.pop(); //不得分，则去除尾部
+  for(var i=0,len=foods.length;i<len;i++){
+    if(newHead.equals(foods[i].position)){
+      score.add(foods[i].getScore());
+      foods.splice(i,1);
+      return;
+    }
   }
+  this.segments.pop(); //不得分，则去除尾部
 };
 //获取当前蛇的状态
 Snake.prototype.getStatus = function () {

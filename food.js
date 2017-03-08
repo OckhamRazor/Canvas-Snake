@@ -2,11 +2,13 @@
  * 食物类
  * @description 由Block类构成
  ************************************************/
-var Food = function (border, style) {
+var Food = function (x,y,border,style) {
   this.score = 5; //分数
   this.border = border; //参考系
   this.fillStyle = style; //填充样式
-  this.position = new Block(border, 10, 8, style || '#d6e685');
+  this.x = x || 0;
+  this.y = y || 0;
+  this.position = new Block(border, x, y, style || '#d6e685');
 };
 //设置食物块分数
 Food.prototype.setScore = function (score) {
@@ -37,5 +39,5 @@ Food.prototype.move = function () {
 //重置食物
 Food.prototype.reset = function () {
   this.score = 5; //分数
-  this.position = new Block(this.border, 10, 8, this.fillStyle || '#d6e685');
+  this.position = new Block(this.border, this.x, this.y, this.fillStyle || '#d6e685');
 };

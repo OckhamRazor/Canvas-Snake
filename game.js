@@ -4,7 +4,7 @@ var Game = function () {
   this.tip = null; //信息类
   this.score = null; //创建分数
   this.snake = null; //贪吃蛇
-  this.food = null; //食物
+  this.foods = []; //食物
   this.border = null; //参考系
   this.background = null; //网格背景
   this.scene = null; //场景
@@ -27,7 +27,7 @@ Game.prototype.render = function (canvas, ctx) {
         this.end(); //游戏结束
       }else{
         ctx.clearRect(0, 0, canvas.width, canvas.height); //清除画布
-        this.snake.move(this.food, this.score); //移动蛇
+        this.snake.move(this.foods, this.score); //移动蛇
         this.scene.render(ctx); //重新渲染场景
       }
     }
@@ -42,13 +42,18 @@ Game.prototype.init = function (canvas, ctx, ratio) {
   this.tip = new Tip({x: canvas.width/ratio/2, y: canvas.height/ratio/2}); //信息类
   this.score = new Score(canvas.width/ratio-90,5); //创建分数记录
   this.snake = new Snake(this.border); //创建角色 - 贪吃蛇
-  this.food = new Food(this.border, '#c06000'); //创建角色 - 食物
+  for(var i=0;i<20;i++){
+    var food = new Food(i, 7, this.border, '#c06000');
+    this.foods.push(food); //创建角色 - 食物
+  }
+  console.log(this.foods.length);
+
   this.background = new BackGround(this.border); //创建网格背景
 
   this.scene.add(this.background);
   this.scene.add(this.score);
   this.scene.add(this.snake);
-  this.scene.add(this.food);
+  this.scene.add(this.foods);
 
   this.initControl();
   this.scene.render(ctx);
@@ -75,7 +80,6 @@ Game.prototype.end = function () {
 //游戏重置
 Game.prototype.reset = function () {
   this.snake.reset();
-  this.food.reset();
   this.score.reset();
 };
 //游戏控制器

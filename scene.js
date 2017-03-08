@@ -8,8 +8,16 @@ var Scene = function () {
 Scene.prototype.render = function (ctx) {
   //绘制其它元素
   for(var i=0,len = this.container.length;i<len;i++){
-    if(typeof this.container[i].draw === 'function'){
-      this.container[i].draw(ctx);
+    if(isArray(this.container[i])){
+      for(var j=0,len2=this.container[i].length;j<len2;j++){
+        if(typeof this.container[i][j].draw === 'function'){
+          this.container[i][j].draw(ctx);
+        }
+      }
+    }else{
+      if(typeof this.container[i].draw === 'function'){
+        this.container[i].draw(ctx);
+      }
     }
   }
 };

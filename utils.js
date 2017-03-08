@@ -16,3 +16,7 @@ function setPixelRatio(canvas, ctx) {
 
   return ratio;
 }
+
+function isArray(o){
+  return Object.prototype.toString.call(o)=='[object Array]';
+}
