@@ -4,7 +4,7 @@ var Game = function () {
   this.tip = null; //信息类
   this.score = null; //创建分数
   this.snake = null; //贪吃蛇
-  this.foods = []; //食物
+  this.foods = null; //食物
   this.border = null; //参考系
   this.background = null; //网格背景
   this.scene = null; //场景
@@ -24,8 +24,10 @@ Game.prototype.render = function (canvas, ctx) {
       this.lastTime = this.now;
       //判断游戏是否结束
       if(this.snake.getStatus()){
-        this.end(); //游戏结束
-      }else{
+        this.end(false); //游戏结束
+      } else if(this.foods.isEmpty()){
+        this.end(true); //游戏胜利
+      } else{
         ctx.clearRect(0, 0, canvas.width, canvas.height); //清除画布
         this.snake.move(this.foods, this.score); //移动蛇
         this.scene.render(ctx); //重新渲染场景
@@ -38,15 +40,20 @@ Game.prototype.init = function (canvas, ctx, ratio) {
   this.ctx = ctx; //画布
 
   this.scene = new Scene(); //创建场景
-  this.border = new Border(10, canvas.width/ratio-100, canvas.height/ratio,2,2); //创建参考系
-  this.tip = new Tip({x: canvas.width/ratio/2, y: canvas.height/ratio/2}); //信息类
-  this.score = new Score(canvas.width/ratio-90,5); //创建分数记录
+  this.border = new Border(10, canvas.width/ratio-150, canvas.height/ratio,2,2); //创建参考系
+  this.tip = new Tip({x: (canvas.width/ratio-150)/2, y: canvas.height/ratio/2}); //信息类
+  this.score = new Score(canvas.width/ratio-130,5); //创建分数记录
   this.snake = new Snake(this.border); //创建角色 - 贪吃蛇
-  for(var i=0;i<20;i++){
-    var food = new Food(i, 7, this.border, '#c06000');
-    this.foods.push(food); //创建角色 - 食物
-  }
-  console.log(this.foods.length);
+  this.foods = new Foods(this.border);
+  this.foods.setData(
+    [
+      {x:1,y:1, info:{count: 1, datetime: '2017-02-12',style:'#d6e685'}},
+      {x:3,y:1, info:{count: 7, datetime: '2017-02-12',style:'#8cc665'}},
+      {x:4,y:7, info:{count: 1, datetime: '2017-02-12',style: "#44a340"}},
+      {x:6,y:7, info:{count: 3, datetime: '2017-02-12',style: "#1e6823"}}
+    ]
+  );
+  this.foods.create(); //创建食物集合
 
   this.background = new BackGround(this.border); //创建网格背景
 
@@ -54,6 +61,8 @@ Game.prototype.init = function (canvas, ctx, ratio) {
   this.scene.add(this.score);
   this.scene.add(this.snake);
   this.scene.add(this.foods);
+
+  console.log(this.foods);
 
   this.initControl();
   this.scene.render(ctx);
@@ -73,14 +82,19 @@ Game.prototype.continue = function () {
   this.status = 'RUNNING';
 };
 //游戏结束
-Game.prototype.end = function () {
+Game.prototype.end = function (status) {
   this.status = 'END';
-  this.tip.gameOver(this.ctx);
+  if(status){
+    this.tip.win(this.ctx);
+  }else{
+    this.tip.gameOver(this.ctx);
+  }
 };
 //游戏重置
 Game.prototype.reset = function () {
   this.snake.reset();
   this.score.reset();
+  this.foods.reset();
 };
 //游戏控制器
 Game.prototype.initControl = function () {

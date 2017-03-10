@@ -88,10 +88,12 @@ Snake.prototype.move = function (foods, score) {
   }
 
   this.segments.unshift(newHead); //像头部加入新身体
-  for(var i=0,len=foods.length;i<len;i++){
-    if(newHead.equals(foods[i].position)){
-      score.add(foods[i].getScore());
-      foods.splice(i,1);
+  var _foods = foods.getFoods();
+  for(var i=0,len=_foods.length;i<len;i++){
+    if(newHead.equals(_foods[i].position)){
+      score.add(_foods[i].getScore());
+      score.updateDetailInfo(_foods[i].info);
+      foods.removeFood(i);
       return;
     }
   }

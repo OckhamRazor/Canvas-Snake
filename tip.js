@@ -3,10 +3,7 @@
  ***************************************************/
 function Tip(position, font, style) {
   //绘制坐标
-  this.position = {
-    x: 300,
-    y: 50
-  };
+  this.position = position || {x:300, y:50};
   this.font = font || '14px Comic Sans MS'; //字体样式
   this.fillStyle = style || '#000'; //字体颜色
   this.textBaseline = 'bottom';
@@ -22,6 +19,11 @@ Tip.prototype.setCtx = function (ctx) {
 Tip.prototype.gameOver = function (ctx) {
   this.setCtx(ctx);
   ctx.fillText('Game Over', this.position.x, this.position.y);
+};
+//绘制"You Win"提示
+Tip.prototype.win = function (ctx) {
+  this.setCtx(ctx);
+  ctx.fillText('You Win !', this.position.x, this.position.y);
 };
 //绘制"Start"提示
 Tip.prototype.start = function (ctx) {
